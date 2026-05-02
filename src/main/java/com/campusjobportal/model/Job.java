@@ -8,6 +8,7 @@ public class Job {
     private String category;
     private String deadline;
     private int recruiterId;
+    private String approvalStatus; // PENDING, APPROVED, REJECTED
 
     //Default Constructor
     public Job() {
@@ -51,4 +52,8 @@ public class Job {
     public int getRecruiterId() {return recruiterId;}
 
     public void setRecruiterId(int recruiterId) {this.recruiterId = recruiterId;}
+
+    public String getApprovalStatus() {return approvalStatus;}
+
+    public void setApprovalStatus(String approvalStatus) {this.approvalStatus = approvalStatus;}
 }
