@@ -1,0 +1,614 @@
+/* ============================================
+   GLOBAL STYLES - GOLDEN THEME
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background-attachment: fixed;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ============================================
+   ANIMATED BACKGROUND
+   ============================================ */
+
+.background-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.glow {
+    position: absolute;
+    opacity: 0.08;
+    border-radius: 50%;
+}
+
+.glow-1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #d4af37, transparent);
+    top: -100px;
+    right: -100px;
+    animation: float-glow 20s infinite ease-in-out;
+}
+
+.glow-2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #d4af37, transparent);
+    bottom: 50px;
+    left: -50px;
+    animation: float-glow 25s infinite ease-in-out reverse;
+}
+
+.glow-3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #d4af37, transparent);
+    top: 50%;
+    right: 10%;
+    animation: float-glow 22s infinite ease-in-out;
+}
+
+@keyframes float-glow {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px);
+    }
+    50% {
+        transform: translateY(-50px) translateX(20px);
+    }
+}
+
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
+
+.register-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   REGISTER CARD
+   ============================================ */
+
+.register-card {
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    padding: 1.8rem 2rem;
+    box-shadow: 0 25px 60px rgba(212, 175, 55, 0.25);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    animation: slideInUp 0.8s ease-out;
+}
+
+/* Custom scrollbar */
+.register-card::-webkit-scrollbar {
+    width: 8px;
+}
+
+.register-card::-webkit-scrollbar-track {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 10px;
+}
+
+.register-card::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #d4af37, #f0d968);
+    border-radius: 10px;
+}
+
+.register-card::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #f0d968, #d4af37);
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 1.3rem;
+}
+
+.logo-circle {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, #d4af37 0%, #f0d968 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #1a1a2e;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+    50% {
+        box-shadow: 0 10px 50px rgba(212, 175, 55, 0.5);
+    }
+}
+
+.register-header h1 {
+    font-size: 1.6rem;
+    color: #1a1a2e;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+    background: linear-gradient(135deg, #d4af37 0%, #f0d968 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.register-header p {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+/* ============================================
+   ALERTS
+   ============================================ */
+
+.alert {
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+.alert i {
+    font-size: 1.2rem;
+}
+
+.alert-error {
+    background: #fee;
+    color: #c0392b;
+    border: 1px solid #f5a5a5;
+}
+
+.alert-success {
+    background: #efe;
+    color: #27ae60;
+    border: 1px solid #b5e7b5;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   FORM STYLES
+   ============================================ */
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    position: relative;
+}
+
+.input-wrapper {
+    position: relative;
+    margin-bottom: 0.3rem;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    background: #f8f8f8;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: #d4af37;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+}
+
+.input-wrapper.focused input {
+    border-color: #d4af37;
+    background: white;
+}
+
+.input-wrapper label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    background: transparent;
+    padding: 0 0.3rem;
+    color: #000;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.input-wrapper label i {
+    color: #d4af37;
+    font-size: 0.9rem;
+}
+
+.input-wrapper input:focus + label,
+.input-wrapper input:not(:placeholder-shown) + label {
+    top: -10px;
+    font-size: 0.75rem;
+    color: #d4af37;
+    font-weight: 600;
+}
+
+.input-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, #d4af37, #f0d968);
+    transition: width 0.3s ease;
+}
+
+.input-wrapper.focused .input-line,
+.input-wrapper input:focus ~ .input-line {
+    width: 100%;
+}
+
+/* PASSWORD TOGGLE BUTTON */
+.toggle-password {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #d4af37;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-password:hover {
+    color: #f0d968;
+}
+
+/* ============================================
+   ROLE SELECTOR
+   ============================================ */
+
+.role-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #000;
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+    font-size: 0.85rem;
+}
+
+.role-label i {
+    color: #d4af37;
+}
+
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.role-selector input {
+    display: none;
+}
+
+.role-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.75rem;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f8f8;
+    font-weight: 600;
+    color: #555;
+}
+
+.role-selector input:checked + .role-option {
+    background: linear-gradient(135deg, #d4af37 0%, #f0d968 100%);
+    color: white;
+    border-color: #d4af37;
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.role-option:hover {
+    border-color: #d4af37;
+    background: #f0f5ff;
+}
+
+.role-selector input:checked + .role-option:hover {
+    background: linear-gradient(135deg, #d4af37 0%, #f0d968 100%);
+}
+
+/* ============================================
+   PASSWORD STRENGTH
+   ============================================ */
+
+.password-strength {
+    margin-top: 0.5rem;
+}
+
+.strength-bar {
+    height: 6px;
+    background: #e8ecf1;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.strength-fill {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #e74c3c, #f39c12, #f1c40f, #2ecc71, #27ae60);
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+.strength-text {
+    font-size: 0.75rem;
+    color: #7f8c8d;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: none;
+}
+
+/* ============================================
+   SUBMIT BUTTON
+   ============================================ */
+
+.btn-register {
+    width: 100%;
+    padding: 0.95rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #d4af37 0%, #f0d968 100%);
+    color: #1a1a2e;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+    margin-top: 0.3rem;
+    letter-spacing: 0.5px;
+}
+
+.btn-register:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+}
+
+.btn-register:active {
+    transform: translateY(0);
+}
+
+.btn-register.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.btn-register i {
+    transition: transform 0.3s ease;
+}
+
+.btn-register:hover i {
+    transform: translateX(5px);
+}
+
+/* ============================================
+   FORM FOOTER
+   ============================================ */
+
+.form-footer {
+    text-align: center;
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid #e8e8e8;
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.form-footer a {
+    color: #d4af37;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.form-footer a:hover {
+    color: #f0d968;
+    text-decoration: underline;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 1.5rem 2rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .register-card {
+        padding: 2rem 1.5rem;
+        border-radius: 20px;
+        max-width: 100%;
+    }
+
+    .register-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .logo-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .input-wrapper input {
+        padding: 0.9rem 1rem;
+    }
+
+    .btn-register {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-container {
+        padding: 1rem;
+    }
+
+    .register-card {
+        padding: 1.5rem 1.2rem;
+        border-radius: 15px;
+        max-height: calc(100vh - 2rem);
+    }
+
+    .register-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .logo-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .register-header p {
+        font-size: 0.85rem;
+    }
+
+    .input-wrapper input {
+        padding: 0.85rem 0.9rem;
+        font-size: 0.9rem;
+    }
+
+    .input-wrapper label {
+        font-size: 0.85rem;
+    }
+
+    .toggle-password {
+        right: 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .btn-register {
+        padding: 0.95rem;
+        font-size: 0.95rem;
+    }
+
+    .form-footer {
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+
+    .footer {
+        padding: 1rem;
+        font-size: 0.8rem;
+    }
+}

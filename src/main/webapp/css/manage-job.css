@@ -1,0 +1,25 @@
+body {
+    background: #0f172a;
+    color: white;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    margin-top: 40px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 10px;
+    border-bottom: 1px solid gray;
+}
+
+a {
+    margin-right: 10px;
+    color: gold;
+}
