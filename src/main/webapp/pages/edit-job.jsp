@@ -2,6 +2,10 @@
 
 <%
     Job job = (Job) request.getAttribute("job");
+    if (job == null) {
+        response.sendRedirect("../pages/error.jsp");
+        return;
+    }
 %>
 
 <!DOCTYPE html>
