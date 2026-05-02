@@ -6,8 +6,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserDAO {
+    private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
 
     /**
      * Register a new user
@@ -24,7 +27,8 @@ public class UserDAO {
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, user.getPassword());
+            // Hash the password before saving
+            preparedStatement.setString(4, com.campusjobportal.util.PasswordUtil.hashPassword(user.getPassword()));
             preparedStatement.setString(5, user.getUserType());
             preparedStatement.setString(6, user.getPhoneNumber());
             preparedStatement.setBoolean(7, true);
@@ -32,7 +36,7 @@ public class UserDAO {
             int result = preparedStatement.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error registering user: " + user.getEmail(), e);
             return false;
         }
     }
@@ -50,7 +54,8 @@ public class UserDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             
             preparedStatement.setString(1, email);
-            preparedStatement.setString(2, password);
+            // Hash input password to compare with database hash
+            preparedStatement.setString(2, com.campusjobportal.util.PasswordUtil.hashPassword(password));
             
             ResultSet resultSet = preparedStatement.executeQuery();
             
@@ -66,7 +71,7 @@ public class UserDAO {
                 return user;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error authenticating user: " + email, e);
         }
         return null;
     }
@@ -96,7 +101,7 @@ public class UserDAO {
                 return user;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error getting user by email: " + email, e);
         }
         return null;
     }
@@ -128,7 +133,7 @@ public class UserDAO {
                 return user;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error getting user by ID: " + userId, e);
         }
         return null;
     }
@@ -154,7 +159,7 @@ public class UserDAO {
             int result = preparedStatement.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error updating user profile: " + user.getUserId(), e);
             return false;
         }
     }
