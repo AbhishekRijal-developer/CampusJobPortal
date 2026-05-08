@@ -14,8 +14,8 @@ public class StudentProfileDAO {
     // Create or update student profile
     public boolean saveProfile(StudentProfile profile) {
         String checkQuery = "SELECT * FROM student_profiles WHERE user_id = ?";
-        String insertQuery = "INSERT INTO student_profiles (user_id, location, date_of_birth, institution, degree, field_of_study, expected_graduation, gpa, skills, company_name, position, start_date, end_date, work_description, bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        String updateQuery = "UPDATE student_profiles SET location = ?, date_of_birth = ?, institution = ?, degree = ?, field_of_study = ?, expected_graduation = ?, gpa = ?, skills = ?, company_name = ?, position = ?, start_date = ?, end_date = ?, work_description = ?, bio = ?, updated_date = CURRENT_TIMESTAMP WHERE user_id = ?";
+        String insertQuery = "INSERT INTO student_profiles (user_id, location, date_of_birth, institution, degree, field_of_study, expected_graduation, gpa, skills, company_name, position, start_date, end_date, work_description, bio, cv_file_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String updateQuery = "UPDATE student_profiles SET location = ?, date_of_birth = ?, institution = ?, degree = ?, field_of_study = ?, expected_graduation = ?, gpa = ?, skills = ?, company_name = ?, position = ?, start_date = ?, end_date = ?, work_description = ?, bio = ?, cv_file_path = ?, updated_date = CURRENT_TIMESTAMP WHERE user_id = ?";
 
         try (Connection conn = DBConnection.getConnection()) {
             // Check if profile exists
@@ -40,7 +40,8 @@ public class StudentProfileDAO {
                 updateStmt.setDate(12, profile.getEndDate());
                 updateStmt.setString(13, profile.getWorkDescription());
                 updateStmt.setString(14, profile.getBio());
-                updateStmt.setInt(15, profile.getUserId());
+                updateStmt.setString(15, profile.getCvFilePath());
+                updateStmt.setInt(16, profile.getUserId());
 
                 return updateStmt.executeUpdate() > 0;
             } else {
@@ -61,6 +62,7 @@ public class StudentProfileDAO {
                 insertStmt.setDate(13, profile.getEndDate());
                 insertStmt.setString(14, profile.getWorkDescription());
                 insertStmt.setString(15, profile.getBio());
+                insertStmt.setString(16, profile.getCvFilePath());
 
                 return insertStmt.executeUpdate() > 0;
             }
@@ -98,6 +100,7 @@ public class StudentProfileDAO {
                 profile.setEndDate(rs.getDate("end_date"));
                 profile.setWorkDescription(rs.getString("work_description"));
                 profile.setBio(rs.getString("bio"));
+                profile.setCvFilePath(rs.getString("cv_file_path"));
                 profile.setCreatedDate(rs.getString("created_date"));
                 profile.setUpdatedDate(rs.getString("updated_date"));
             }
@@ -140,6 +143,7 @@ public class StudentProfileDAO {
                 "end_date DATE," +
                 "work_description LONGTEXT," +
                 "bio LONGTEXT," +
+                "cv_file_path VARCHAR(500)," +
                 "created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                 "updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
                 "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE," +

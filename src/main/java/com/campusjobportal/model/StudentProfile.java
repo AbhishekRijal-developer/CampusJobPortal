@@ -22,6 +22,7 @@ public class StudentProfile implements Serializable {
     private Date endDate;
     private String workDescription;
     private String bio;
+    private String cvFilePath;
     private String createdDate;
     private String updatedDate;
 
@@ -161,6 +162,14 @@ public class StudentProfile implements Serializable {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getCvFilePath() {
+        return cvFilePath;
+    }
+
+    public void setCvFilePath(String cvFilePath) {
+        this.cvFilePath = cvFilePath;
     }
 
     public String getCreatedDate() {

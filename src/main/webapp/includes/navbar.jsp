@@ -83,37 +83,32 @@
             <% } %>
 
             <!-- ADMIN NAVIGATION -->
-            <% if ("admin".equals(session.getAttribute("userRole"))) { %>
+            <% if ("admin".equals(session.getAttribute("userRole")) || "ADMIN".equals(session.getAttribute("userRole"))) { %>
             <li class="nav-item">
-                <a href="admin-dashboard.jsp" class="nav-link">
+                <a href="/CampusJobPortal/admin/dashboard" class="nav-link">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link">
-                    <i class="fas fa-users"></i> Users <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-users"></i> Management <i class="fas fa-chevron-down"></i>
                 </a>
                 <div class="dropdown-content">
-                    <a href="#" class="dropdown-item">
+                    <a href="/CampusJobPortal/admin/users" class="dropdown-item">
                         <i class="fas fa-user-tie"></i> Manage Users
                     </a>
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-user-check"></i> Verify Accounts
+                    <a href="/CampusJobPortal/admin/jobs" class="dropdown-item">
+                        <i class="fas fa-briefcase"></i> Approve Jobs
+                    </a>
+                    <a href="/CampusJobPortal/admin/complaints" class="dropdown-item">
+                        <i class="fas fa-exclamation-triangle"></i> Complaints
                     </a>
                 </div>
             </li>
-            <li class="nav-item dropdown">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-chart-bar"></i> Reports <i class="fas fa-chevron-down"></i>
+            <li class="nav-item">
+                <a href="/CampusJobPortal/admin/reports" class="nav-link">
+                    <i class="fas fa-chart-bar"></i> Reports
                 </a>
-                <div class="dropdown-content">
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-chart-line"></i> Job Stats
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-chart-pie"></i> User Analytics
-                    </a>
-                </div>
             </li>
             <% } %>
         </ul>

@@ -15,6 +15,7 @@ public class User implements Serializable {
     private String companyName; // For recruiters
     private String resumePath; // For students
     private boolean isActive;
+    private String approvalStatus; // PENDING, APPROVED, REJECTED
     private String createdDate;
     private String updatedDate;
 
@@ -112,6 +113,14 @@ public class User implements Serializable {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public String getApprovalStatus() {
+        return approvalStatus;
+    }
+
+    public void setApprovalStatus(String approvalStatus) {
+        this.approvalStatus = approvalStatus;
     }
 
     public String getCreatedDate() {

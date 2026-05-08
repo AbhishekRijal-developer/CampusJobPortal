@@ -4,10 +4,20 @@
 CREATE DATABASE IF NOT EXISTS campus_job_portal;
 USE campus_job_portal;
 
+-- Disable foreign key checks for cleanup
+SET FOREIGN_KEY_CHECKS=0;
+
 -- Drop existing tables if they exist
+DROP TABLE IF EXISTS audit_logs;
+DROP TABLE IF EXISTS complaints;
 DROP TABLE IF EXISTS applications;
 DROP TABLE IF EXISTS jobs;
+DROP TABLE IF EXISTS student_profiles;
+DROP TABLE IF EXISTS site_content;
 DROP TABLE IF EXISTS users;
+
+-- Re-enable foreign key checks
+SET FOREIGN_KEY_CHECKS=1;
 
 -- Users Table
 CREATE TABLE users (
@@ -21,10 +31,12 @@ CREATE TABLE users (
     company_name VARCHAR(100),
     resume_path VARCHAR(255),
     is_active BOOLEAN DEFAULT TRUE,
+    approval_status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'APPROVED',
     created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_email (email),
-    INDEX idx_user_type (user_type)
+    INDEX idx_user_type (user_type),
+    INDEX idx_approval_status (approval_status)
 );
 
 -- Jobs Table
@@ -41,11 +53,13 @@ CREATE TABLE jobs (
     deadline DATE NOT NULL,
     applications_count INT DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
+    approval_status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
     posted_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (recruiter_id) REFERENCES users(user_id) ON DELETE CASCADE,
     INDEX idx_recruiter_id (recruiter_id),
     INDEX idx_is_active (is_active),
+    INDEX idx_approval_status (approval_status),
     INDEX idx_posted_date (posted_date)
 );
 
@@ -68,12 +82,49 @@ CREATE TABLE applications (
     UNIQUE KEY unique_application (job_id, student_id)
 );
 
+-- Complaints Table
+CREATE TABLE complaints (
+    complaint_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    subject VARCHAR(200) NOT NULL,
+    description LONGTEXT NOT NULL,
+    admin_response LONGTEXT,
+    status ENUM('OPEN', 'RESOLVED') DEFAULT 'OPEN',
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status)
+);
+
+-- Audit Logs Table for tracking Admin Actions
+CREATE TABLE audit_logs (
+    log_id INT PRIMARY KEY AUTO_INCREMENT,
+    admin_id INT NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    target_type VARCHAR(50),
+    target_id INT,
+    details TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (admin_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    INDEX idx_admin_id (admin_id),
+    INDEX idx_timestamp (timestamp)
+);
+
+-- Site Content Table
+CREATE TABLE site_content (
+    content_id INT PRIMARY KEY AUTO_INCREMENT,
+    page_name VARCHAR(50) UNIQUE NOT NULL,
+    content_key VARCHAR(50) NOT NULL,
+    content_value LONGTEXT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 -- Sample test data (optional)
--- Insert test users
+-- Insert test users with SHA-256 hashed passwords
 INSERT INTO users (first_name, last_name, email, password, user_type, phone_number, is_active) VALUES
-('John', 'Doe', 'john.doe@email.com', 'password123', 'STUDENT', '1234567890', TRUE),
-('Jane', 'Smith', 'jane.smith@email.com', 'password123', 'RECRUITER', '9876543210', TRUE),
-('Admin', 'User', 'admin@email.com', 'admin123', 'ADMIN', '5555555555', TRUE);
+('John', 'Doe', 'john.doe@email.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'STUDENT', '1234567890', TRUE),
+('Jane', 'Smith', 'jane.smith@email.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'RECRUITER', '9876543210', TRUE),
+('Admin', 'User', 'admin@email.com', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'ADMIN', '5555555555', TRUE);
 
 -- Insert sample jobs
 INSERT INTO jobs (recruiter_id, job_title, job_description, location, employment_type, salary_range, qualifications, skills, deadline, is_active) VALUES
@@ -83,4 +134,4 @@ INSERT INTO jobs (recruiter_id, job_title, job_description, location, employment
 -- Show status
 SELECT 'Database initialization completed successfully!' AS status;
 SELECT COUNT(*) as total_users FROM users;
-SELECT COUNT(*) as total_jobs FROM jobs;applications
+SELECT COUNT(*) as total_jobs FROM jobs;

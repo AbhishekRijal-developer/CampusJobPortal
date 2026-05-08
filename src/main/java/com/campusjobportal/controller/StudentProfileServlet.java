@@ -4,19 +4,28 @@ import com.campusjobportal.dao.StudentProfileDAO;
 import com.campusjobportal.model.StudentProfile;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.File;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 @WebServlet("/StudentProfileServlet")
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024,
+    maxFileSize = 5 * 1024 * 1024,
+    maxRequestSize = 10 * 1024 * 1024
+)
 public class StudentProfileServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private StudentProfileDAO profileDAO = new StudentProfileDAO();
+    private static final String UPLOAD_DIR = "uploads/profiles";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -107,6 +116,30 @@ public class StudentProfileServlet extends HttpServlet {
             e.printStackTrace();
         }
 
+        // Handle CV File Upload
+        try {
+            Part cvPart = request.getPart("cv");
+            if (cvPart != null && cvPart.getSize() > 0) {
+                String fileName = extractFileName(cvPart);
+                if (isValidCVFile(fileName)) {
+                    String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+                    
+                    String uniqueFileName = userId + "_" + System.currentTimeMillis() + "_" + fileName;
+                    String filePath = uploadPath + File.separator + uniqueFileName;
+                    cvPart.write(filePath);
+                    
+                    profile.setCvFilePath(UPLOAD_DIR + "/" + uniqueFileName);
+                }
+            }
+        } catch (ServletException | IOException e) {
+            System.err.println("Error uploading CV: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         // Save profile
         if (profileDAO.saveProfile(profile)) {
             session.setAttribute("message", "Profile saved successfully!");
@@ -116,4 +149,26 @@ public class StudentProfileServlet extends HttpServlet {
             response.sendRedirect("/CampusJobPortal/StudentProfileServlet");
         }
     }
+
+    private String extractFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] items = contentDisp.split(";");
+        for (String s : items) {
+            if (s.trim().startsWith("filename")) {
+                return new File(s.substring(s.indexOf("=") + 2, s.length() - 1)).getName();
+            }
+        }
+        return "";
+    }
+
+    private boolean isValidCVFile(String fileName) {
+        String[] validExtensions = {"pdf", "doc", "docx"};
+        for (String ext : validExtensions) {
+            if (fileName.toLowerCase().endsWith("." + ext)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

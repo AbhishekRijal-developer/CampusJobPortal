@@ -6,8 +6,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserDAO {
+    private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
 
     /**
      * Register a new user
@@ -24,7 +27,8 @@ public class UserDAO {
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, user.getPassword());
+            // Hash the password before saving
+            preparedStatement.setString(4, com.campusjobportal.util.PasswordUtil.hashPassword(user.getPassword()));
             preparedStatement.setString(5, user.getUserType());
             preparedStatement.setString(6, user.getPhoneNumber());
             preparedStatement.setBoolean(7, true);
@@ -32,7 +36,7 @@ public class UserDAO {
             int result = preparedStatement.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error registering user: " + user.getEmail(), e);
             return false;
         }
     }
@@ -50,7 +54,8 @@ public class UserDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             
             preparedStatement.setString(1, email);
-            preparedStatement.setString(2, password);
+            // Hash input password to compare with database hash
+            preparedStatement.setString(2, com.campusjobportal.util.PasswordUtil.hashPassword(password));
             
             ResultSet resultSet = preparedStatement.executeQuery();
             
@@ -66,7 +71,7 @@ public class UserDAO {
                 return user;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error authenticating user: " + email, e);
         }
         return null;
     }
@@ -96,7 +101,7 @@ public class UserDAO {
                 return user;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error getting user by email: " + email, e);
         }
         return null;
     }
@@ -128,7 +133,7 @@ public class UserDAO {
                 return user;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error getting user by ID: " + userId, e);
         }
         return null;
     }
@@ -154,7 +159,80 @@ public class UserDAO {
             int result = preparedStatement.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error updating user profile: " + user.getUserId(), e);
+            return false;
+        }
+    }
+
+    /**
+     * Get all users in the system (for admin management)
+     * @return List of all User objects
+     */
+    public java.util.List<User> getAllUsers() {
+        java.util.List<User> users = new java.util.ArrayList<>();
+        String query = "SELECT * FROM users ORDER BY created_date DESC";
+        
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            
+            while (resultSet.next()) {
+                User user = new User();
+                user.setUserId(resultSet.getInt("user_id"));
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setEmail(resultSet.getString("email"));
+                user.setUserType(resultSet.getString("user_type"));
+                user.setPhoneNumber(resultSet.getString("phone_number"));
+                user.setCompanyName(resultSet.getString("company_name"));
+                user.setActive(resultSet.getBoolean("is_active"));
+                user.setApprovalStatus(resultSet.getString("approval_status"));
+                user.setCreatedDate(resultSet.getString("created_date"));
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error retrieving all users", e);
+        }
+        
+        return users;
+    }
+
+    /**
+     * Activate a user account
+     * @param userId User ID
+     * @return true if activation successful, false otherwise
+     */
+    public boolean activateUser(int userId) {
+        String query = "UPDATE users SET is_active = true, approval_status = 'APPROVED' WHERE user_id = ?";
+        
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            
+            preparedStatement.setInt(1, userId);
+            int result = preparedStatement.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error activating user: " + userId, e);
+            return false;
+        }
+    }
+
+    /**
+     * Deactivate a user account
+     * @param userId User ID
+     * @return true if deactivation successful, false otherwise
+     */
+    public boolean deactivateUser(int userId) {
+        String query = "UPDATE users SET is_active = false, approval_status = 'REJECTED' WHERE user_id = ?";
+        
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            
+            preparedStatement.setInt(1, userId);
+            int result = preparedStatement.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error deactivating user: " + userId, e);
             return false;
         }
     }

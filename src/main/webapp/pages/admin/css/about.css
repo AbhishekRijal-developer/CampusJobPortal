@@ -1,0 +1,166 @@
+/* ============================================
+   ABOUT PAGE - GOLDEN THEME
+   ============================================ */
+
+:root {
+    --gold-primary: #d4af37;
+    --gold-light: #f4e8d0;
+    --gold-dark: #b8941f;
+    --dark-bg: #1a1a2e;
+    --dark-accent: #16213e;
+    --light-text: #ffffff;
+    --text-gray: #cccccc;
+}
+
+.about-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 120px 20px 60px;
+    position: relative;
+}
+
+.about-background-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.about-glow {
+    position: absolute;
+    opacity: 0.08;
+    border-radius: 50%;
+}
+
+.about-glow-1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #d4af37, transparent);
+    top: 10%;
+    left: -10%;
+}
+
+.about-glow-2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #d4af37, transparent);
+    bottom: 20%;
+    right: 5%;
+}
+
+.about-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.about-header h1 {
+    font-size: 3.5rem;
+    color: var(--gold-primary);
+    margin-bottom: 15px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.about-header p {
+    font-size: 1.2rem;
+    color: var(--text-gray);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+.about-section {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 15px;
+    padding: 40px;
+    margin-bottom: 40px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.about-section h2 {
+    color: var(--gold-primary);
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.about-section h2 i {
+    font-size: 2.2rem;
+}
+
+.about-section p {
+    color: var(--text-gray);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.feature-card {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: var(--gold-primary);
+    transform: translateY(-5px);
+}
+
+.feature-card i {
+    font-size: 2.5rem;
+    color: var(--gold-primary);
+    margin-bottom: 15px;
+}
+
+.feature-card h3 {
+    color: var(--light-text);
+    margin-bottom: 10px;
+}
+
+.feature-card p {
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .about-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .about-section {
+        padding: 25px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
