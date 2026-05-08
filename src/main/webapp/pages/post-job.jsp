@@ -4,8 +4,8 @@
 <head>
     <title>Post Job</title>
 
-    <link rel="stylesheet" href="../css/navbar.css">
-    <link rel="stylesheet" href="../css/job-form.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/navbar.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/job-form.css">
 </head>
 
 <body>

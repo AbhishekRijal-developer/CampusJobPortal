@@ -13,8 +13,8 @@
 <head>
     <title>Edit Job</title>
 
-    <link rel="stylesheet" href="../css/navbar.css">
-    <link rel="stylesheet" href="../css/edit-job.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/navbar.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/edit-job.css">
 </head>
 
 <body>

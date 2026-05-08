@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Job Portal - Home</title>
-    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/CampusJobPortal/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/navbar.css">
-    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/navbar.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/home.css">
 </head>
 <body>
     <!-- NAVBAR -->

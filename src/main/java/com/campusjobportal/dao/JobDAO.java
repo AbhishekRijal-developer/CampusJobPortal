@@ -179,4 +179,57 @@ public class JobDAO {
 
         return count;
     }
+
+    /**
+     * Get all jobs for admin management view
+     * @return List of all Job objects
+     */
+    public List<Job> getAllJobsForAdmin() {
+        List<Job> jobList = new ArrayList<>();
+        String query = "SELECT * FROM jobs ORDER BY created_date DESC";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Job job = new Job();
+                job.setId(rs.getInt("id"));
+                job.setTitle(rs.getString("title"));
+                job.setDescription(rs.getString("description"));
+                job.setLocation(rs.getString("location"));
+                job.setCategory(rs.getString("category"));
+                job.setDeadline(rs.getString("deadline"));
+                job.setRecruiterId(rs.getInt("recruiter_id"));
+                jobList.add(job);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return jobList;
+    }
+
+    /**
+     * Deactivate a job posting
+     * @param jobId Job ID
+     * @return true if deactivation successful, false otherwise
+     */
+    public boolean deactivateJob(int jobId) {
+        String query = "UPDATE jobs SET status = 'INACTIVE' WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, jobId);
+            int result = ps.executeUpdate();
+            return result > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

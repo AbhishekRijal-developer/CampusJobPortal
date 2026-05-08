@@ -12,6 +12,11 @@ import java.io.IOException;
 public class AdminFilter implements Filter {
 
     @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // Initialize filter if needed
+    }
+
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         
@@ -31,5 +36,10 @@ public class AdminFilter implements Filter {
         } else {
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/pages/login.jsp");
         }
+    }
+
+    @Override
+    public void destroy() {
+        // Cleanup if needed
     }
 }

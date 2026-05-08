@@ -10,8 +10,8 @@
 <head>
   <title>Applicants</title>
 
-  <link rel="stylesheet" href="../css/navbar.css">
-  <link rel="stylesheet" href="../css/applicants.css">
+  <link rel="stylesheet" href="/CampusJobPortal/css/navbar.css">
+  <link rel="stylesheet" href="/CampusJobPortal/css/applicants.css">
 </head>
 
 <body>

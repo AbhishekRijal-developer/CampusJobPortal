@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Campus Job Portal - Home</title>
-    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/home.css">
 </head>
 <body>
     <%@ include file="../includes/navbar.jsp" %>

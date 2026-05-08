@@ -10,8 +10,8 @@
 <head>
     <title>Manage Jobs</title>
 
-    <link rel="stylesheet" href="../css/navbar.css">
-    <link rel="stylesheet" href="../css/manage-jobs.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/navbar.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/manage-jobs.css">
 </head>
 
 <body>

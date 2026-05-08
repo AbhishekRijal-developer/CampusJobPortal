@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Navbar CSS -->
-    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/navbar.css">
 
     <!-- External CSS -->
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/login.css">
 </head>
 
 <body>
