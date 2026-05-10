@@ -37,3 +37,19 @@ lib/
 .env
 .env.local
 *.log
+
+# Logs and build artifacts
+logs/
+*.log
+build.log
+error.log
+
+# Configuration files
+config/
+*.properties
+src/main/resources/
+
+# Test data and uploads
+uploads/
+src/test/data/
+temp/

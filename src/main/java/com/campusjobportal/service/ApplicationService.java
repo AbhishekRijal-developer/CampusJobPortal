@@ -1,12 +1,10 @@
-package com.campusjob.service;
+package com.campusjobportal.service;
 
-import com.campusjob.dao.ApplicationDAO;
-import com.campusjob.dao.JobDAO;
-import com.campusjob.model.Application;
-import com.campusjob.model.Job;
+import com.campusjobportal.dao.ApplicationDAO;
+import com.campusjobportal.dao.JobDAO;
+import com.campusjobportal.model.Application;
+import com.campusjobportal.model.Job;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,41 +50,47 @@ public class ApplicationService {
      * @return          Error message, or null on success
      */
     public String applyForJob(int studentId, int jobId, String coverNote) {
-        try {
-            // --- 1. Job must exist and be active ---
-            Job job = jobDAO.findById(jobId);
-            if (job == null) {
-                return "The job you are trying to apply for does not exist.";
-            }
-            if (!"ACTIVE".equalsIgnoreCase(job.getStatus())) {
-                return "This job posting is no longer accepting applications.";
-            }
+        // --- 1. Job must exist and be active ---
+        Job job = jobDAO.getJobById(jobId);
+        if (job == null) {
+            return "The job you are trying to apply for does not exist.";
+        }
+        if (!"ACTIVE".equalsIgnoreCase(job.getApprovalStatus())) {
+            return "This job posting is no longer accepting applications.";
+        }
 
-            // --- 2. Deadline check ---
-            if (job.getDeadline() != null && job.getDeadline().isBefore(LocalDate.now())) {
-                return "The application deadline for this job has passed.";
+        // --- 2. Deadline check ---
+        if (job.getDeadline() != null && !job.getDeadline().isEmpty()) {
+            try {
+                java.time.LocalDate deadline = java.time.LocalDate.parse(job.getDeadline());
+                if (deadline.isBefore(java.time.LocalDate.now())) {
+                    return "The application deadline for this job has passed.";
+                }
+            } catch (Exception e) {
+                // Invalid date format, continue
             }
+        }
 
-            // --- 3. Duplicate application check ---
-            boolean alreadyApplied = applicationDAO.existsByStudentAndJob(studentId, jobId);
-            if (alreadyApplied) {
-                return "You have already applied for this job.";
-            }
+        // --- 3. Duplicate application check ---
+        List<Application> existingApps = applicationDAO.getApplicationsByStudentId(studentId);
+        boolean alreadyApplied = existingApps.stream()
+                .anyMatch(app -> app.getJobId() == jobId);
+        if (alreadyApplied) {
+            return "You have already applied for this job.";
+        }
 
-            // --- 4. Persist ---
-            Application application = new Application();
-            application.setStudentId(studentId);
-            application.setJobId(jobId);
-            application.setStatus("PENDING");
-            application.setAppliedDate(LocalDate.now());
-            application.setCoverNote(coverNote != null ? coverNote.trim() : "");
+        // --- 4. Persist ---
+        Application application = new Application();
+        application.setStudentId(studentId);
+        application.setJobId(jobId);
+        application.setStatus("PENDING");
+        application.setApplicationDate(java.sql.Date.valueOf(java.time.LocalDate.now()).toString());
 
-            applicationDAO.insertApplication(application);
+        boolean success = applicationDAO.insertApplication(application);
+        if (success) {
             return null; // success
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while submitting your application. Please try again.";
+        } else {
+            return "Failed to submit application. Please try again.";
         }
     }
 
@@ -102,12 +106,7 @@ public class ApplicationService {
      */
     public List<Application> getApplicationsByStudent(int studentId) {
         if (studentId <= 0) return new ArrayList<>();
-        try {
-            return applicationDAO.findByStudentId(studentId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return applicationDAO.findByStudentId(studentId);
     }
 
     /**
@@ -117,12 +116,7 @@ public class ApplicationService {
      * @return          Count of applications
      */
     public int countApplicationsByStudent(int studentId) {
-        try {
-            return applicationDAO.countByStudentId(studentId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
-        }
+        return applicationDAO.findByStudentId(studentId).size();
     }
 
     // ----------------------------------------------------------------
@@ -137,12 +131,7 @@ public class ApplicationService {
      */
     public List<Application> getApplicationsByJob(int jobId) {
         if (jobId <= 0) return new ArrayList<>();
-        try {
-            return applicationDAO.findByJobId(jobId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return applicationDAO.getApplicantsByJob(jobId);
     }
 
     /**
@@ -153,12 +142,7 @@ public class ApplicationService {
      */
     public List<Application> getApplicationsByRecruiter(int recruiterId) {
         if (recruiterId <= 0) return new ArrayList<>();
-        try {
-            return applicationDAO.findByRecruiterId(recruiterId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return applicationDAO.findByRecruiterId(recruiterId);
     }
 
     // ----------------------------------------------------------------
@@ -171,12 +155,7 @@ public class ApplicationService {
      * @return Full application list with student and job details
      */
     public List<Application> getAllApplications() {
-        try {
-            return applicationDAO.findAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return applicationDAO.findAll();
     }
 
     /**
@@ -185,12 +164,7 @@ public class ApplicationService {
      * @return Platform-wide application count
      */
     public int getTotalApplicationCount() {
-        try {
-            return applicationDAO.countAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
-        }
+        return applicationDAO.countAll();
     }
 
     // ----------------------------------------------------------------
@@ -218,29 +192,23 @@ public class ApplicationService {
             return "Invalid status value: " + newStatus;
         }
 
-        try {
-            Application app = applicationDAO.findById(applicationId);
-            if (app == null) return "Application not found.";
+        Application app = applicationDAO.findById(applicationId);
+        if (app == null) return "Application not found.";
 
-            // Confirm the recruiter owns the job this application is for
-            Job job = jobDAO.findById(app.getJobId());
-            if (job == null || job.getRecruiterId() != recruiterId) {
-                return "You do not have permission to update this application.";
-            }
-
-            // Validate status transition
-            String currentStatus = app.getStatus();
-            if (!isValidTransition(currentStatus, newStatus)) {
-                return "Cannot change status from " + currentStatus + " to " + newStatus + ".";
-            }
-
-            applicationDAO.updateStatus(applicationId, newStatus);
-            return null;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while updating the application status.";
+        // Confirm the recruiter owns the job this application is for
+        Job job = jobDAO.findById(app.getJobId());
+        if (job == null || job.getRecruiterId() != recruiterId) {
+            return "You do not have permission to update this application.";
         }
+
+        // Validate status transition
+        String currentStatus = app.getStatus();
+        if (!isValidTransition(currentStatus, newStatus)) {
+            return "Cannot change status from " + currentStatus + " to " + newStatus + ".";
+        }
+
+        applicationDAO.updateStatus(applicationId, newStatus);
+        return null;
     }
 
     // ----------------------------------------------------------------
@@ -256,23 +224,17 @@ public class ApplicationService {
      * @return              Error message, or null on success
      */
     public String withdrawApplication(int applicationId, int studentId) {
-        try {
-            Application app = applicationDAO.findById(applicationId);
-            if (app == null) return "Application not found.";
-            if (app.getStudentId() != studentId) {
-                return "You do not have permission to withdraw this application.";
-            }
-            if (!"PENDING".equalsIgnoreCase(app.getStatus())) {
-                return "Only pending applications can be withdrawn.";
-            }
-
-            applicationDAO.deleteApplication(applicationId);
-            return null;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while withdrawing your application.";
+        Application app = applicationDAO.findById(applicationId);
+        if (app == null) return "Application not found.";
+        if (app.getStudentId() != studentId) {
+            return "You do not have permission to withdraw this application.";
         }
+        if (!"PENDING".equalsIgnoreCase(app.getStatus())) {
+            return "Only pending applications can be withdrawn.";
+        }
+
+        applicationDAO.deleteApplication(applicationId);
+        return null;
     }
 
     // ----------------------------------------------------------------

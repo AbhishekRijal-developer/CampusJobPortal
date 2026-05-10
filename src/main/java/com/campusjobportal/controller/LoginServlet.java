@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet {
             // Redirect based on user type
             String userType = user.getUserType();
             if ("STUDENT".equals(userType)) {
-                response.sendRedirect("/CampusJobPortal/pages/home.jsp");
+                response.sendRedirect("/CampusJobPortal/StudentDashboardServlet");
             } else if ("RECRUITER".equals(userType)) {
                 response.sendRedirect("/CampusJobPortal/pages/recruiter-dashboard.jsp");
             } else if ("ADMIN".equals(userType)) {

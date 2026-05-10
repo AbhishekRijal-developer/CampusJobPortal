@@ -1,11 +1,11 @@
-package com.campusjob.service;
+package com.campusjobportal.service;
 
-import com.campusjob.dao.ApplicationDAO;
-import com.campusjob.dao.JobDAO;
-import com.campusjob.dao.UserDAO;
-import com.campusjob.model.Job;
+import com.campusjobportal.dao.ApplicationDAO;
+import com.campusjobportal.dao.JobDAO;
+import com.campusjobportal.dao.UserDAO;
+import com.campusjobportal.model.Application;
+import com.campusjobportal.model.Job;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,28 +59,21 @@ public class DashboardService {
     public Map<String, Object> getAdminDashboardStats() {
         Map<String, Object> stats = new HashMap<>();
 
-        try {
-            stats.put("totalStudents",     userDAO.countByRole("STUDENT"));
-            stats.put("totalRecruiters",   userDAO.countByRole("RECRUITER"));
-            stats.put("pendingUsers",       userDAO.countByStatus("PENDING"));
-            stats.put("activeJobs",         jobDAO.countByStatus("ACTIVE"));
-            stats.put("pendingJobs",        jobDAO.countByStatus("PENDING"));
-            stats.put("totalApplications",  applicationDAO.countAll());
-            stats.put("recentApplications", applicationDAO.countRecentApplications(7));
-            stats.put("topJobs",            jobDAO.findTopJobsByApplicationCount(5));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // Populate zeros so the page still renders cleanly
-            stats.put("totalStudents",     0);
-            stats.put("totalRecruiters",   0);
-            stats.put("pendingUsers",       0);
-            stats.put("activeJobs",         0);
-            stats.put("pendingJobs",        0);
-            stats.put("totalApplications",  0);
-            stats.put("recentApplications", 0);
-            stats.put("topJobs",            new ArrayList<>());
-            stats.put("error", "Could not load dashboard statistics. Please refresh.");
-        }
+        stats.put("totalStudents",     userDAO.findByRole("STUDENT").size());
+        stats.put("totalRecruiters",   userDAO.findByRole("RECRUITER").size());
+        stats.put("pendingUsers",       userDAO.findByStatus("PENDING").size());
+        stats.put("activeJobs",         jobDAO.getActiveJobs().size());
+        stats.put("pendingJobs",        jobDAO.getAllJobs().stream().filter(job -> "PENDING".equals(job.getApprovalStatus())).count());
+        stats.put("totalApplications",  applicationDAO.getAllApplications().size());
+        stats.put("recentApplications", applicationDAO.getAllApplications().values().stream().filter(app -> {
+            try {
+                java.time.LocalDate appDate = java.time.LocalDate.parse(app.getApplicationDate());
+                return appDate.isAfter(java.time.LocalDate.now().minusDays(7));
+            } catch (Exception e) {
+                return false;
+            }
+        }).count());
+        stats.put("topJobs",            jobDAO.getAllJobs().subList(0, Math.min(5, jobDAO.getAllJobs().size()))); // TODO: implement proper top jobs
 
         return stats;
     }
@@ -96,13 +89,12 @@ public class DashboardService {
     public Map<String, Integer> getApplicationStatusBreakdown() {
         Map<String, Integer> breakdown = new HashMap<>();
         String[] statuses = {"PENDING", "SHORTLISTED", "ACCEPTED", "REJECTED"};
-        try {
-            for (String s : statuses) {
-                breakdown.put(s, applicationDAO.countByStatus(s));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            for (String s : statuses) breakdown.put(s, 0);
+        List<Application> allApps = new ArrayList<>(applicationDAO.getAllApplications().values());
+        for (String status : statuses) {
+            int count = (int) allApps.stream()
+                    .filter(app -> status.equalsIgnoreCase(app.getStatus()))
+                    .count();
+            breakdown.put(status, count);
         }
         return breakdown;
     }
@@ -115,12 +107,13 @@ public class DashboardService {
      * @return Category-count map
      */
     public Map<String, Integer> getJobCountByCategory() {
-        try {
-            return jobDAO.countJobsByCategory();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new HashMap<>();
+        List<Job> allJobs = jobDAO.getAllJobsForAdmin();
+        Map<String, Integer> categoryCount = new HashMap<>();
+        for (Job job : allJobs) {
+            String category = job.getCategory() != null ? job.getCategory() : "Other";
+            categoryCount.put(category, categoryCount.getOrDefault(category, 0) + 1);
         }
+        return categoryCount;
     }
 
     // ================================================================
@@ -145,37 +138,42 @@ public class DashboardService {
     public Map<String, Object> getRecruiterDashboardStats(int recruiterId) {
         Map<String, Object> stats = new HashMap<>();
 
-        try {
-            int totalJobs        = jobDAO.countByRecruiterId(recruiterId);
-            int activeJobs       = jobDAO.countByRecruiterAndStatus(recruiterId, "ACTIVE");
-            int pendingJobs      = jobDAO.countByRecruiterAndStatus(recruiterId, "PENDING");
-            int totalApps        = applicationDAO.countByRecruiterId(recruiterId);
-            int shortlisted      = applicationDAO.countByRecruiterAndStatus(recruiterId, "SHORTLISTED");
-            List<Job> recentJobs = jobDAO.findRecentByRecruiterId(recruiterId, 5);
+        List<Job> recruiterJobs = jobDAO.getJobsByRecruiter(recruiterId);
+        int totalJobs = recruiterJobs.size();
+        int activeJobs = (int) recruiterJobs.stream()
+                .filter(job -> "ACTIVE".equals(job.getApprovalStatus()))
+                .count();
+        int pendingJobs = (int) recruiterJobs.stream()
+                .filter(job -> "PENDING".equals(job.getApprovalStatus()))
+                .count();
 
-            double appRate = (totalApps > 0)
-                    ? Math.round((shortlisted * 100.0 / totalApps) * 10.0) / 10.0
-                    : 0.0;
-
-            stats.put("totalJobsPosted",   totalJobs);
-            stats.put("activeJobs",         activeJobs);
-            stats.put("pendingJobs",        pendingJobs);
-            stats.put("totalApplications",  totalApps);
-            stats.put("shortlistCount",     shortlisted);
-            stats.put("applicationRate",    appRate);
-            stats.put("recentJobs",         recentJobs);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            stats.put("totalJobsPosted",   0);
-            stats.put("activeJobs",         0);
-            stats.put("pendingJobs",        0);
-            stats.put("totalApplications",  0);
-            stats.put("shortlistCount",     0);
-            stats.put("applicationRate",    0.0);
-            stats.put("recentJobs",         new ArrayList<>());
-            stats.put("error", "Could not load your dashboard. Please refresh.");
+        // Count applications for recruiter's jobs
+        int totalApps = 0;
+        int shortlisted = 0;
+        for (Job job : recruiterJobs) {
+            List<Application> jobApps = applicationDAO.getApplicantsByJob(job.getId());
+            totalApps += jobApps.size();
+            shortlisted += (int) jobApps.stream()
+                    .filter(app -> "SHORTLISTED".equals(app.getStatus()))
+                    .count();
         }
+
+        List<Job> recentJobs = recruiterJobs.stream()
+                .sorted((j1, j2) -> Integer.compare(j2.getId(), j1.getId())) // Assuming higher ID = more recent
+                .limit(5)
+                .toList();
+
+        double appRate = (totalApps > 0)
+                ? Math.round((shortlisted * 100.0 / totalApps) * 10.0) / 10.0
+                : 0.0;
+
+        stats.put("totalJobsPosted",   totalJobs);
+        stats.put("activeJobs",         activeJobs);
+        stats.put("pendingJobs",        pendingJobs);
+        stats.put("totalApplications",  totalApps);
+        stats.put("shortlistCount",     shortlisted);
+        stats.put("applicationRate",    appRate);
+        stats.put("recentJobs",         recentJobs);
 
         return stats;
     }
@@ -188,12 +186,13 @@ public class DashboardService {
      * @return            Job-title → application-count map (top 10 jobs)
      */
     public Map<String, Integer> getApplicationsPerJobForRecruiter(int recruiterId) {
-        try {
-            return applicationDAO.countPerJobByRecruiterId(recruiterId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new HashMap<>();
+        List<Job> recruiterJobs = jobDAO.getJobsByRecruiter(recruiterId);
+        Map<String, Integer> jobAppCounts = new HashMap<>();
+        for (Job job : recruiterJobs) {
+            List<Application> apps = applicationDAO.getApplicantsByJob(job.getId());
+            jobAppCounts.put(job.getTitle(), apps.size());
         }
+        return jobAppCounts;
     }
 
     // ================================================================
@@ -219,26 +218,14 @@ public class DashboardService {
     public Map<String, Object> getStudentDashboardStats(int studentId, int wishlistSize) {
         Map<String, Object> stats = new HashMap<>();
 
-        try {
-            stats.put("totalApplications", applicationDAO.countByStudentId(studentId));
-            stats.put("pendingCount",       applicationDAO.countByStudentAndStatus(studentId, "PENDING"));
-            stats.put("shortlistedCount",   applicationDAO.countByStudentAndStatus(studentId, "SHORTLISTED"));
-            stats.put("acceptedCount",      applicationDAO.countByStudentAndStatus(studentId, "ACCEPTED"));
-            stats.put("rejectedCount",      applicationDAO.countByStudentAndStatus(studentId, "REJECTED"));
-            stats.put("activeJobCount",     jobDAO.countByStatus("ACTIVE"));
-            stats.put("wishlistCount",      wishlistSize);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            stats.put("totalApplications", 0);
-            stats.put("pendingCount",       0);
-            stats.put("shortlistedCount",   0);
-            stats.put("acceptedCount",      0);
-            stats.put("rejectedCount",      0);
-            stats.put("activeJobCount",     0);
-            stats.put("wishlistCount",      wishlistSize);
-            stats.put("error", "Could not load your dashboard. Please refresh.");
-        }
+        List<Application> studentApps = applicationDAO.getApplicationsByStudentId(studentId);
+        stats.put("totalApplications", studentApps.size());
+        stats.put("pendingCount",       (int) studentApps.stream().filter(app -> "PENDING".equals(app.getStatus())).count());
+        stats.put("shortlistedCount",   (int) studentApps.stream().filter(app -> "SHORTLISTED".equals(app.getStatus())).count());
+        stats.put("acceptedCount",      (int) studentApps.stream().filter(app -> "ACCEPTED".equals(app.getStatus())).count());
+        stats.put("rejectedCount",      (int) studentApps.stream().filter(app -> "REJECTED".equals(app.getStatus())).count());
+        stats.put("activeJobCount",     jobDAO.getActiveJobs().size());
+        stats.put("wishlistCount",      wishlistSize);
 
         return stats;
     }
@@ -251,11 +238,6 @@ public class DashboardService {
      * @return      List of Job objects ordered by application count desc
      */
     public List<Job> getTrendingJobs(int limit) {
-        try {
-            return jobDAO.findTopJobsByApplicationCount(limit);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return jobDAO.findTopJobsByApplicationCount(limit);
     }
 }

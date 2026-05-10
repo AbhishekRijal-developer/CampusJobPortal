@@ -12,9 +12,7 @@ import java.io.IOException;
 @WebServlet("/ViewApplicantsServlet")
 public class ViewApplicantsServlet extends HttpServlet {
 
-    /**
-     * Shows all applicants for a specific job
-     */
+    
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

@@ -9,6 +9,8 @@ public class Job {
     private String deadline;
     private int recruiterId;
     private String approvalStatus; // PENDING, APPROVED, REJECTED
+    private double salaryMin;
+    private double salaryMax;
 
     //Default Constructor
     public Job() {
@@ -56,4 +58,16 @@ public class Job {
     public String getApprovalStatus() {return approvalStatus;}
 
     public void setApprovalStatus(String approvalStatus) {this.approvalStatus = approvalStatus;}
+
+    public double getSalaryMin() {return salaryMin;}
+
+    public void setSalaryMin(double salaryMin) {this.salaryMin = salaryMin;}
+
+    public double getSalaryMax() {return salaryMax;}
+
+    public void setSalaryMax(double salaryMax) {this.salaryMax = salaryMax;}
+
+    public int getJobId() {return id;}
+
+    public void setStatus(String status) {this.approvalStatus = status;}
 }

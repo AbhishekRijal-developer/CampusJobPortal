@@ -301,6 +301,26 @@
 </head>
 <body>
     <%@ include file="/includes/navbar.jsp"%>
+    <%
+        com.campusjobportal.model.User currentUser =
+            (com.campusjobportal.model.User) session.getAttribute("user");
+        String fullName = session.getAttribute("userName") != null
+            ? (String) session.getAttribute("userName")
+            : (currentUser != null ? currentUser.getFullName() : "Student");
+        String userEmail = currentUser != null && currentUser.getEmail() != null
+            ? currentUser.getEmail()
+            : "";
+        StudentProfile profile = (StudentProfile) request.getAttribute("profile");
+        int skillsCount = 0;
+        if (profile != null && profile.getSkills() != null && !profile.getSkills().trim().isEmpty()) {
+            skillsCount = profile.getSkills().split("\\s*,\\s*").length;
+        }
+        int jobsApplied = 0;
+        Object appsObj = request.getAttribute("applications");
+        if (appsObj instanceof java.util.List) {
+            jobsApplied = ((java.util.List<?>) appsObj).size();
+        }
+    %>
 
     <div class="profile-container">
         <!-- Alert Messages -->
@@ -334,16 +354,16 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="profile-info">
-                    <h2>John Doe</h2>
-                    <p><strong>Student</strong></p>
-                    <p>john.doe@email.com</p>
+                    <h2><%= fullName %></h2>
+                    <p><strong><%= session.getAttribute("userType") != null ? session.getAttribute("userType") : "Student" %></strong></p>
+                    <p><%= userEmail %></p>
                     <div class="profile-stats">
                         <div class="stat-item">
-                            <div class="stat-number">5</div>
+                            <div class="stat-number"><%= skillsCount %></div>
                             <div class="stat-label">Skills</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">2</div>
+                            <div class="stat-number"><%= jobsApplied %></div>
                             <div class="stat-label">Jobs Applied</div>
                         </div>
                     </div>

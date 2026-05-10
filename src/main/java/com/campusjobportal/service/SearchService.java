@@ -1,10 +1,7 @@
-package com.campusjob.service;
+package com.campusjobportal.service;
 
-import com.campusjob.dao.JobDAO;
-import com.campusjob.model.Job;
-import com.campusjob.util.ValidationUtil;
-
-import java.sql.SQLException;
+import com.campusjobportal.dao.JobDAO;
+import com.campusjobportal.model.Job;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,20 +66,14 @@ public class SearchService {
             return new ArrayList<>(); // controller should show an error separately
         }
 
-        try {
-            List<Job> results = jobDAO.searchJobs(
-                    cleanKeyword,
-                    cleanCategory,
-                    cleanLocation,
-                    deadline,
-                    MAX_RESULTS
-            );
-            return results != null ? results : new ArrayList<>();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        List<Job> results = jobDAO.searchJobs(
+                cleanKeyword,
+                cleanCategory,
+                cleanLocation,
+                deadline,
+                MAX_RESULTS
+        );
+        return results != null ? results : new ArrayList<>();
     }
 
     // ================================================================
@@ -141,12 +132,7 @@ public class SearchService {
      * @return List of category strings, alphabetically sorted
      */
     public List<String> getAllCategories() {
-        try {
-            return jobDAO.findDistinctCategories();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return jobDAO.findDistinctCategories();
     }
 
     /**
@@ -156,12 +142,7 @@ public class SearchService {
      * @return List of location strings, alphabetically sorted
      */
     public List<String> getAllLocations() {
-        try {
-            return jobDAO.findDistinctLocations();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return jobDAO.findDistinctLocations();
     }
 
     // ================================================================

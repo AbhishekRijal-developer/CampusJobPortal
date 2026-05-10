@@ -1,12 +1,11 @@
-package com.campusjob.service;
+package com.campusjobportal.service;
 
-import com.campusjob.dao.UserDAO;
-import com.campusjob.model.User;
-import com.campusjob.util.PasswordUtil;
-import com.campusjob.util.ValidationUtil;
+import com.campusjobportal.dao.UserDAO;
+import com.campusjobportal.model.User;
+import com.campusjobportal.util.PasswordUtil;
+import com.campusjobportal.util.ValidationUtil;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
+
 import java.util.List;
 
 /**
@@ -114,38 +113,31 @@ public class UserService {
             return null;
         }
 
-        try {
-            User user = userDAO.findByEmail(email.trim().toLowerCase());
+        User user = userDAO.getUserByEmail(email.trim().toLowerCase());
 
-            if (user == null) {
-                lastLoginError = "No account found with that email address.";
-                return null;
-            }
-
-            // Password verification — compare against SHA-256 hash
-            String hashedInput = PasswordUtil.hashPassword(password);
-            if (!hashedInput.equals(user.getPasswordHash())) {
-                lastLoginError = "Incorrect password. Please try again.";
-                return null;
-            }
-
-            // Account status check
-            if ("PENDING".equalsIgnoreCase(user.getStatus())) {
-                lastLoginError = "Your account is awaiting admin approval. Please check back later.";
-                return null;
-            }
-            if ("SUSPENDED".equalsIgnoreCase(user.getStatus())) {
-                lastLoginError = "Your account has been suspended. Please contact support.";
-                return null;
-            }
-
-            return user; // success
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            lastLoginError = "A system error occurred. Please try again.";
+        if (user == null) {
+            lastLoginError = "No account found with that email address.";
             return null;
         }
+
+        // Password verification — compare against SHA-256 hash
+        String hashedInput = PasswordUtil.hashPassword(password);
+        if (!hashedInput.equals(user.getPassword())) {
+            lastLoginError = "Incorrect password. Please try again.";
+            return null;
+        }
+
+        // Account status check
+        if ("PENDING".equalsIgnoreCase(user.getApprovalStatus())) {
+            lastLoginError = "Your account is awaiting admin approval. Please check back later.";
+            return null;
+        }
+        if ("SUSPENDED".equalsIgnoreCase(user.getApprovalStatus())) {
+            lastLoginError = "Your account has been suspended. Please contact support.";
+            return null;
+        }
+
+        return user; // success
     }
 
     /** Stores the reason a login attempt failed (for controller to forward to JSP). */
@@ -167,12 +159,7 @@ public class UserService {
      */
     public User getUserById(int userId) {
         if (userId <= 0) return null;
-        try {
-            return userDAO.findById(userId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return userDAO.getUserById(userId);
     }
 
     /**
@@ -199,34 +186,28 @@ public class UserService {
             return "Phone number must be 10 digits.";
         }
 
-        try {
-            // Email uniqueness (excluding current user)
-            User emailOwner = userDAO.findByEmail(user.getEmail());
-            if (emailOwner != null && emailOwner.getUserId() != user.getUserId()) {
-                return "This email address is already in use by another account.";
-            }
-
-            // Phone uniqueness (excluding current user)
-            User phoneOwner = userDAO.findByPhone(user.getPhone());
-            if (phoneOwner != null && phoneOwner.getUserId() != user.getUserId()) {
-                return "This phone number is already registered.";
-            }
-
-            // Hash new password if provided
-            if (!ValidationUtil.isNullOrEmpty(newPlainPassword)) {
-                if (newPlainPassword.length() < 8) {
-                    return "Password must be at least 8 characters long.";
-                }
-                user.setPasswordHash(PasswordUtil.hashPassword(newPlainPassword));
-            }
-
-            userDAO.updateUser(user);
-            return null;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while updating your profile.";
+        // Email uniqueness (excluding current user)
+        User emailOwner = userDAO.findByEmail(user.getEmail());
+        if (emailOwner != null && emailOwner.getUserId() != user.getUserId()) {
+            return "This email address is already in use by another account.";
         }
+
+        // Phone uniqueness (excluding current user)
+        User phoneOwner = userDAO.findByPhone(user.getPhone());
+        if (phoneOwner != null && phoneOwner.getUserId() != user.getUserId()) {
+            return "This phone number is already registered.";
+        }
+
+        // Hash new password if provided
+        if (!ValidationUtil.isNullOrEmpty(newPlainPassword)) {
+            if (newPlainPassword.length() < 8) {
+                return "Password must be at least 8 characters long.";
+            }
+            user.setPasswordHash(PasswordUtil.hashPassword(newPlainPassword));
+        }
+
+        userDAO.updateUser(user);
+        return null;
     }
 
     // ----------------------------------------------------------------
@@ -240,12 +221,7 @@ public class UserService {
      * @return      List of matching users
      */
     public List<User> getUsersByRole(String role) {
-        try {
-            return userDAO.findByRole(role);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return userDAO.findByRole(role);
     }
 
     /**
@@ -254,12 +230,7 @@ public class UserService {
      * @return List of pending users
      */
     public List<User> getPendingUsers() {
-        try {
-            return userDAO.findByStatus("PENDING");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return userDAO.findByStatus("PENDING");
     }
 
     /**
@@ -289,18 +260,13 @@ public class UserService {
      * @return       Error message, or null on success
      */
     public String deleteUser(int userId) {
-        try {
-            User user = userDAO.findById(userId);
-            if (user == null) return "User not found.";
-            if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-                return "Admin accounts cannot be deleted through this panel.";
-            }
-            userDAO.deleteUser(userId);
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while deleting the user.";
+        User user = userDAO.findById(userId);
+        if (user == null) return "User not found.";
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            return "Admin accounts cannot be deleted through this panel.";
         }
+        userDAO.deleteUser(userId);
+        return null;
     }
 
     /**
@@ -310,12 +276,7 @@ public class UserService {
      * @return     Count
      */
     public int countUsersByRole(String role) {
-        try {
-            return userDAO.countByRole(role);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
-        }
+        return userDAO.countByRole(role);
     }
 
     // ----------------------------------------------------------------
@@ -355,42 +316,31 @@ public class UserService {
      * @return     Error message, or null on success
      */
     private String persistNewUser(User user, String role) {
-        try {
-            // Email uniqueness
-            if (userDAO.findByEmail(user.getEmail()) != null) {
-                return "An account with this email address already exists.";
-            }
-            // Phone uniqueness
-            if (userDAO.findByPhone(user.getPhone()) != null) {
-                return "An account with this phone number already exists.";
-            }
-
-            // Hash password before storage
-            user.setPasswordHash(PasswordUtil.hashPassword(user.getPlainPassword()));
-            user.setRole(role);
-            user.setStatus("PENDING"); // awaiting admin approval
-
-            userDAO.insertUser(user);
-            return null;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred during registration. Please try again.";
+        // Email uniqueness
+        if (userDAO.findByEmail(user.getEmail()) != null) {
+            return "An account with this email address already exists.";
         }
+        // Phone uniqueness
+        if (userDAO.findByPhone(user.getPhone()) != null) {
+            return "An account with this phone number already exists.";
+        }
+
+        // Hash password before storage
+        user.setPasswordHash(PasswordUtil.hashPassword(user.getPlainPassword()));
+        user.setRole(role);
+        user.setStatus("PENDING"); // awaiting admin approval
+
+        userDAO.insertUser(user);
+        return null;
     }
 
     /**
      * Generic account-status helper used by approve/suspend.
      */
     private String changeUserStatus(int userId, String newStatus) {
-        try {
-            User user = userDAO.findById(userId);
-            if (user == null) return "User not found.";
-            userDAO.updateUserStatus(userId, newStatus);
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while updating the account status.";
-        }
+        User user = userDAO.findById(userId);
+        if (user == null) return "User not found.";
+        userDAO.updateUserStatus(userId, newStatus);
+        return null;
     }
 }
