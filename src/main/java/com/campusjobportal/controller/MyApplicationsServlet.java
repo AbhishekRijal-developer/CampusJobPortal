@@ -2,6 +2,7 @@ package com.campusjobportal.controller;
 
 import com.campusjobportal.dao.ApplicationDAO;
 import com.campusjobportal.model.Application;
+import com.campusjobportal.service.ApplicationService;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @WebServlet("/MyApplicationsServlet")
 public class MyApplicationsServlet extends HttpServlet {
-    private ApplicationDAO applicationDAO = new ApplicationDAO();
+    private ApplicationService applicationService = new ApplicationService();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -26,7 +27,7 @@ public class MyApplicationsServlet extends HttpServlet {
             return;
         }
         
-        List<Application> applications = applicationDAO.getApplicationsByStudentId(userId);
+        List<Application> applications = applicationService.getApplicationsByStudent(userId);
         request.setAttribute("applications", applications);
         request.getRequestDispatcher("/pages/my-applications.jsp").forward(request, response);
     }

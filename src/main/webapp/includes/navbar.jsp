@@ -37,33 +37,33 @@
             </li>
 
             <!-- STUDENT NAVIGATION -->
-            <% if ("student".equals(session.getAttribute("userRole"))) { %>
+            <% if ("STUDENT".equals(session.getAttribute("userType"))) { %>
             <li class="nav-item">
-                <a href="job-list.jsp" class="nav-link">
+                <a href="/CampusJobPortal/BrowseJobsServlet" class="nav-link">
                     <i class="fas fa-briefcase"></i> Browse Jobs
                 </a>
             </li>
             <li class="nav-item">
-                <a href="applications.jsp" class="nav-link">
+                <a href="/CampusJobPortal/MyApplicationsServlet" class="nav-link">
                     <i class="fas fa-file-alt"></i> My Applications
                 </a>
             </li>
             <li class="nav-item">
-                <a href="student-dashboard.jsp" class="nav-link">
+                <a href="/CampusJobPortal/StudentDashboardServlet" class="nav-link">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
             </li>
             <% } %>
 
             <!-- RECRUITER NAVIGATION -->
-            <% if ("recruiter".equals(session.getAttribute("userRole"))) { %>
+            <% if ("RECRUITER".equals(session.getAttribute("userType"))) { %>
             <li class="nav-item">
-                <a href="post-job.jsp" class="nav-link">
+                <a href="/CampusJobPortal/pages/post-job.jsp" class="nav-link">
                     <i class="fas fa-plus"></i> Post Job
                 </a>
             </li>
             <li class="nav-item">
-                <a href="recruiter-dashboard.jsp" class="nav-link">
+                <a href="/CampusJobPortal/pages/recruiter-dashboard.jsp" class="nav-link">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
             </li>
@@ -72,10 +72,10 @@
                     <i class="fas fa-cogs"></i> Manage <i class="fas fa-chevron-down"></i>
                 </a>
                 <div class="dropdown-content">
-                    <a href="job-list.jsp" class="dropdown-item">
+                    <a href="/CampusJobPortal/ManageJobServlet" class="dropdown-item">
                         <i class="fas fa-list"></i> My Jobs
                     </a>
-                    <a href="applications.jsp" class="dropdown-item">
+                    <a href="/CampusJobPortal/ViewApplicantsServlet" class="dropdown-item">
                         <i class="fas fa-users"></i> Applications
                     </a>
                 </div>
@@ -83,7 +83,7 @@
             <% } %>
 
             <!-- ADMIN NAVIGATION -->
-            <% if ("admin".equals(session.getAttribute("userRole")) || "ADMIN".equals(session.getAttribute("userRole"))) { %>
+            <% if ("ADMIN".equals(session.getAttribute("userType"))) { %>
             <li class="nav-item">
                 <a href="/CampusJobPortal/admin/dashboard" class="nav-link">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
@@ -116,16 +116,17 @@
         <!-- USER SECTION / AUTH BUTTONS -->
         <div class="navbar-user">
             <% String userEmail = (String) session.getAttribute("userEmail");
-               String userRole = (String) session.getAttribute("userRole");
-               if (userEmail != null) { %>
+               String userName = (String) session.getAttribute("userName");
+               String userType = (String) session.getAttribute("userType");
+               if (userEmail != null || userName != null) { %>
                 <!-- LOGGED IN USER -->
                 <div class="user-info">
                     <div class="user-avatar">
-                        <%= userEmail.charAt(0) %>
+                        <%= (userEmail != null ? userEmail.charAt(0) : userName.charAt(0)) %>
                     </div>
                     <div class="user-details">
-                        <span class="user-name"><%= userEmail.split("@")[0] %></span>
-                        <span class="user-role"><%= userRole != null ? userRole : "User" %></span>
+                        <span class="user-name"><%= userEmail != null ? userEmail.split("@")[0] : userName %></span>
+                        <span class="user-role"><%= userType != null ? userType : "User" %></span>
                     </div>
                 </div>
                 <form action="/CampusJobPortal/LogoutServlet" method="POST" style="display:inline;">

@@ -18,6 +18,8 @@ public class User implements Serializable {
     private String approvalStatus; // PENDING, APPROVED, REJECTED
     private String createdDate;
     private String updatedDate;
+    private String dateOfBirth;
+    private String course;
 
     // Default Constructor
     public User() {
@@ -137,5 +139,66 @@ public class User implements Serializable {
 
     public void setUpdatedDate(String updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getCourse() {
+        return course;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    public String getPhone() {
+        return phoneNumber;
+    }
+
+    public void setPhone(String phone) {
+        this.phoneNumber = phone;
+    }
+
+    public String getRole() {
+        return userType;
+    }
+
+    public void setRole(String role) {
+        this.userType = role;
+    }
+
+    public String getPasswordHash() {
+        return password;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.password = passwordHash;
+    }
+
+    public String getPlainPassword() {
+        return password;
+    }
+
+    public void setPlainPassword(String plainPassword) {
+        this.password = plainPassword;
+    }
+
+    public void setStatus(String status) {
+        this.approvalStatus = status;
+    }
+
+    public Object size() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'size'");
     }
 }

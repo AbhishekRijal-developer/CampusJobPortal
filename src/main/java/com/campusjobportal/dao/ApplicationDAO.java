@@ -4,9 +4,15 @@ import com.campusjobportal.model.Application;
 import com.campusjobportal.util.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ApplicationDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(ApplicationDAO.class.getName());
 
     /**
      * Get all applications submitted by a student
@@ -131,6 +137,103 @@ public class ApplicationDAO {
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<Application> findByStudentId(int studentId) {
+        return getApplicationsByStudentId(studentId);
+    }
+
+    public Map<String, Application> getAllApplications() {
+        Map<String, Application> applications = new HashMap<>();
+        String query = "SELECT * FROM applications";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                Application app = new Application();
+                app.setApplicationId(resultSet.getInt("application_id"));
+                app.setJobId(resultSet.getInt("job_id"));
+                app.setStudentId(resultSet.getInt("student_id"));
+                app.setStatus(resultSet.getString("status"));
+                app.setApplicationDate(resultSet.getString("application_date"));
+                applications.put(String.valueOf(app.getApplicationId()), app);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting all applications", e);
+        }
+        return applications;
+    }
+
+    public List<Application> getApplicationsByRecruiter(int recruiterId) {
+        List<Application> applications = new ArrayList<>();
+        String query = "SELECT a.* FROM applications a JOIN jobs j ON a.job_id = j.id WHERE j.recruiter_id = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, recruiterId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Application app = new Application();
+                app.setApplicationId(resultSet.getInt("application_id"));
+                app.setJobId(resultSet.getInt("job_id"));
+                app.setStudentId(resultSet.getInt("student_id"));
+                app.setStatus(resultSet.getString("status"));
+                app.setApplicationDate(resultSet.getString("application_date"));
+                applications.add(app);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting applications by recruiter: " + recruiterId, e);
+        }
+        return applications;
+    }
+
+    public Application getApplicationById(int applicationId) {
+        String query = "SELECT * FROM applications WHERE application_id = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, applicationId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Application app = new Application();
+                app.setApplicationId(resultSet.getInt("application_id"));
+                app.setJobId(resultSet.getInt("job_id"));
+                app.setStudentId(resultSet.getInt("student_id"));
+                app.setStatus(resultSet.getString("status"));
+                app.setApplicationDate(resultSet.getString("application_date"));
+                return app;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting application by id: " + applicationId, e);
+        }
+        return null;
+    }
+
+    public List<Application> findByRecruiterId(int recruiterId) {
+        return getApplicationsByRecruiter(recruiterId);
+    }
+
+    public List<Application> findAll() {
+        return new ArrayList<>(getAllApplications().values());
+    }
+
+    public int countAll() {
+        return getAllApplications().size();
+    }
+
+    public Application findById(int applicationId) {
+        return getApplicationById(applicationId);
+    }
+
+    public boolean updateStatus(int applicationId, String status) {
+        String query = "UPDATE applications SET status = ? WHERE application_id = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, status);
+            preparedStatement.setInt(2, applicationId);
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error updating application status: " + applicationId, e);
             return false;
         }
     }

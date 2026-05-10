@@ -1,11 +1,9 @@
-package com.campusjob.service;
+package com.campusjobportal.service;
 
-import com.campusjob.dao.JobDAO;
-import com.campusjob.model.Job;
-import com.campusjob.util.ValidationUtil;
+import com.campusjobportal.dao.JobDAO;
+import com.campusjobportal.model.Job;
+import com.campusjobportal.util.ValidationUtil;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +37,15 @@ public class JobService {
         }
 
         // --- Business rule: deadline must be in the future ---
-        if (job.getDeadline() != null && !job.getDeadline().isAfter(LocalDate.now())) {
-            return "Application deadline must be a future date.";
+        if (job.getDeadline() != null && !job.getDeadline().isEmpty()) {
+            try {
+                java.time.LocalDate deadline = java.time.LocalDate.parse(job.getDeadline());
+                if (deadline.isBefore(java.time.LocalDate.now())) {
+                    return "Application deadline must be a future date.";
+                }
+            } catch (Exception e) {
+                return "Invalid deadline format.";
+            }
         }
 
         // --- Business rule: salary range sanity check ---
@@ -50,15 +55,13 @@ public class JobService {
         }
 
         // --- Set default status: pending admin approval ---
-        job.setStatus("PENDING");
-        job.setPostedDate(LocalDate.now());
+        job.setApprovalStatus("PENDING");
 
-        try {
-            jobDAO.insertJob(job);
+        boolean success = jobDAO.insertJob(job);
+        if (success) {
             return null; // success
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while creating the job. Please try again.";
+        } else {
+            return "Failed to create job posting. Please try again.";
         }
     }
 
@@ -74,12 +77,7 @@ public class JobService {
      */
     public Job getJobById(int jobId) {
         if (jobId <= 0) return null;
-        try {
-            return jobDAO.findById(jobId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return jobDAO.getJobById(jobId);
     }
 
     /**
@@ -88,12 +86,7 @@ public class JobService {
      * @return List of active jobs (never null, may be empty)
      */
     public List<Job> getAllActiveJobs() {
-        try {
-            return jobDAO.findByStatus("ACTIVE");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return jobDAO.getActiveJobs();
     }
 
     /**
@@ -104,12 +97,7 @@ public class JobService {
      */
     public List<Job> getJobsByRecruiter(int recruiterId) {
         if (recruiterId <= 0) return new ArrayList<>();
-        try {
-            return jobDAO.findByRecruiterId(recruiterId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return jobDAO.getJobsByRecruiter(recruiterId);
     }
 
     /**
@@ -118,12 +106,7 @@ public class JobService {
      * @return Full list of jobs across all statuses
      */
     public List<Job> getAllJobsForAdmin() {
-        try {
-            return jobDAO.findAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        return jobDAO.getAllJobs();
     }
 
     // ----------------------------------------------------------------
@@ -144,23 +127,18 @@ public class JobService {
         if (validationError != null) return validationError;
 
         // Ownership check
-        try {
-            Job existing = jobDAO.findById(job.getJobId());
-            if (existing == null) {
-                return "Job not found.";
-            }
-            if (existing.getRecruiterId() != requesterId) {
-                return "You do not have permission to edit this job posting.";
-            }
-
-            // After edit, revert to PENDING so admin re-approves
-            job.setStatus("PENDING");
-            jobDAO.updateJob(job);
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while updating the job.";
+        Job existing = jobDAO.findById(job.getJobId());
+        if (existing == null) {
+            return "Job not found.";
         }
+        if (existing.getRecruiterId() != requesterId) {
+            return "You do not have permission to edit this job posting.";
+        }
+
+        // After edit, revert to PENDING so admin re-approves
+        job.setStatus("PENDING");
+        jobDAO.updateJob(job);
+        return null;
     }
 
     /**
@@ -191,18 +169,13 @@ public class JobService {
      * @return            Error message, or null if successful
      */
     public String deactivateJob(int jobId, int requesterId) {
-        try {
-            Job existing = jobDAO.findById(jobId);
-            if (existing == null) return "Job not found.";
-            if (existing.getRecruiterId() != requesterId) {
-                return "You do not have permission to deactivate this job.";
-            }
-            jobDAO.updateJobStatus(jobId, "INACTIVE");
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred.";
+        Job existing = jobDAO.findById(jobId);
+        if (existing == null) return "Job not found.";
+        if (existing.getRecruiterId() != requesterId) {
+            return "You do not have permission to deactivate this job.";
         }
+        jobDAO.updateJobStatus(jobId, "INACTIVE");
+        return null;
     }
 
     // ----------------------------------------------------------------
@@ -218,21 +191,16 @@ public class JobService {
      * @return            Error message, or null if successful
      */
     public String deleteJob(int jobId, int requesterId) {
-        try {
-            Job existing = jobDAO.findById(jobId);
-            if (existing == null) return "Job not found.";
+        Job existing = jobDAO.findById(jobId);
+        if (existing == null) return "Job not found.";
 
-            boolean isAdmin = (requesterId == 0);
-            if (!isAdmin && existing.getRecruiterId() != requesterId) {
-                return "You do not have permission to delete this job.";
-            }
-
-            jobDAO.deleteJob(jobId);
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while deleting the job.";
+        boolean isAdmin = (requesterId == 0);
+        if (!isAdmin && existing.getRecruiterId() != requesterId) {
+            return "You do not have permission to delete this job.";
         }
+
+        jobDAO.deleteJob(jobId);
+        return null;
     }
 
     // ----------------------------------------------------------------
@@ -271,14 +239,9 @@ public class JobService {
      * Generic status-change helper (used by approve/reject).
      */
     private String changeJobStatus(int jobId, String newStatus) {
-        try {
-            Job existing = jobDAO.findById(jobId);
-            if (existing == null) return "Job not found.";
-            jobDAO.updateJobStatus(jobId, newStatus);
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "A database error occurred while updating job status.";
-        }
+        Job existing = jobDAO.findById(jobId);
+        if (existing == null) return "Job not found.";
+        jobDAO.updateJobStatus(jobId, newStatus);
+        return null;
     }
 }
