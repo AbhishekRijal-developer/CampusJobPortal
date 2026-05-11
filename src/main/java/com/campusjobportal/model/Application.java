@@ -11,7 +11,7 @@ public class Application implements Serializable {
     private String status;
     private String applicationDate;
     
-    // Joint fields for Admin view
+    // Joint fields of Admin view
     private String jobTitle;
     private String studentName;
     private String recruiterName;

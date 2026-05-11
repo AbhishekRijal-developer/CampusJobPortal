@@ -18,7 +18,7 @@ public class PasswordUtil {
      * Verifies if the plain password matches the hashed password
      * @param plainPassword Plain text password from input
      * @param hashedPassword Hashed password from database
-     * @return true if matches, false otherwise
+     * @return true if matches, false 
      */
     public static boolean verifyPassword(String plainPassword, String hashedPassword) {
         if (plainPassword == null || hashedPassword == null) return false;
