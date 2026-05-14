@@ -1,0 +1,61 @@
+body {
+    background: #0f172a;
+    color: white;
+    font-family: Arial;
+}
+
+/* Glow effect */
+.container::before {
+    content: '';
+    position: fixed;
+    width: 250px;
+    height: 250px;
+    background: rgba(255, 215, 0, 0.2);
+    border-radius: 50%;
+    filter: blur(80px);
+    top: 10%;
+    right: 20%;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    margin-top: 50px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th {
+    background: #334155;
+    padding: 12px;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #475569;
+}
+
+select {
+    padding: 5px;
+    background: #0f172a;
+    color: white;
+    border: 1px solid #334155;
+}
+
+button {
+    padding: 5px 10px;
+    background: gold;
+    border: none;
+    cursor: pointer;
+}
