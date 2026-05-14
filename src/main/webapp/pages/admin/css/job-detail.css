@@ -1,0 +1,230 @@
+/* ============================================
+   JOB DETAIL PAGE - GOLDEN THEME
+   ============================================ */
+
+:root {
+    --gold-primary: #d4af37;
+    --gold-light: #f4e8d0;
+    --gold-dark: #b8941f;
+    --dark-bg: #1a1a2e;
+    --dark-accent: #16213e;
+    --light-text: #ffffff;
+    --text-gray: #cccccc;
+}
+
+.job-detail-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 120px 20px 60px;
+    position: relative;
+}
+
+.job-detail-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.job-header {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    padding: 40px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.job-title {
+    color: var(--gold-primary);
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    font-weight: 800;
+}
+
+.job-company {
+    color: var(--text-gray);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.job-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.meta-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.meta-item i {
+    color: var(--gold-primary);
+    font-size: 1.3rem;
+}
+
+.meta-item span {
+    color: var(--text-gray);
+    font-size: 1rem;
+}
+
+.job-body {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.job-details {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.job-section {
+    margin-bottom: 30px;
+}
+
+.job-section:last-child {
+    margin-bottom: 0;
+}
+
+.job-section h2 {
+    color: var(--gold-primary);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.job-section h2 i {
+    font-size: 1.3rem;
+}
+
+.job-section p,
+.job-section li {
+    color: var(--text-gray);
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+
+.job-section ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.job-section li {
+    padding-left: 25px;
+    position: relative;
+}
+
+.job-section li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--gold-primary);
+    font-weight: bold;
+}
+
+.job-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.job-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    padding: 25px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.job-card h3 {
+    color: var(--gold-primary);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.salary-display {
+    font-size: 1.8rem;
+    color: var(--gold-primary);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.salary-period {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+}
+
+.job-status {
+    padding: 12px;
+    background: rgba(212, 175, 55, 0.2);
+    border-left: 3px solid var(--gold-primary);
+    border-radius: 5px;
+    color: var(--gold-primary);
+    font-weight: 600;
+    text-align: center;
+}
+
+.btn-apply {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.btn-apply:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+.btn-bookmark {
+    width: 100%;
+    padding: 12px;
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--gold-primary);
+    border: 2px solid var(--gold-primary);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-bookmark:hover {
+    background: rgba(212, 175, 55, 0.2);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .job-body {
+        grid-template-columns: 1fr;
+    }
+
+    .job-title {
+        font-size: 1.8rem;
+    }
+
+    .job-header {
+        padding: 25px;
+    }
+
+    .job-details {
+        padding: 20px;
+    }
+}

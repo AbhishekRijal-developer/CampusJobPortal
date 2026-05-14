@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Preview | Admin Panel</title>
+    <link rel="stylesheet" href="src/main/webapp/css/admin.css">
+    <link rel="stylesheet" href="src/main/webapp/css/admin-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-shield-alt"></i> <span>AdminPanel</span></h2>
+        </div>
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-user-shield"></i> <span>Manage Users</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-briefcase"></i> <span>Approve Jobs</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-file-contract"></i> <span>Applications</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-exclamation-circle"></i> <span>Complaints</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-pie"></i> <span>Analytical Reports</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-edit"></i> <span>Content CMS</span>
+            </a>
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                <a href="#" class="menu-item">
+                    <i class="fas fa-external-link-alt"></i> <span>View Site</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="header-left">
+                <h1 class="header-title">Dashboard Overview</h1>
+                <p class="header-subtitle">Welcome back, System Administrator</p>
+            </div>
+            <div class="header-right">
+                <div class="header-date-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="currentDate"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards Grid -->
+        <div class="stats-grid-enhanced">
+            <div class="stat-card-enhanced card-jobs" id="card-jobs">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-icon-wrapper icon-jobs">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Total Jobs Posted</span>
+                        <span class="card-value count-up" data-target="47">0</span>
+                        <span class="card-trend trend-up">
+                            <i class="fas fa-briefcase"></i> Live Opportunities
+                        </span>
+                    </div>
+                </div>
+                <div class="card-sparkline">
+                    <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <polyline points="0,25 15,20 30,22 45,15 60,18 75,10 90,12 100,5" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card-enhanced card-students" id="card-students">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-icon-wrapper icon-students">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Students Registered</span>
+                        <span class="card-value count-up" data-target="238">0</span>
+                        <span class="card-trend trend-up">
+                            <i class="fas fa-graduation-cap"></i> Active Learners
+                        </span>
+                    </div>
+                </div>
+                <div class="card-sparkline">
+                    <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <polyline points="0,28 20,22 35,25 50,15 65,18 80,8 100,5" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card-enhanced card-applications" id="card-applications">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-icon-wrapper icon-applications">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Applications Submitted</span>
+                        <span class="card-value count-up" data-target="512">0</span>
+                        <span class="card-trend trend-neutral">
+                            <i class="fas fa-paper-plane"></i> Total Received
+                        </span>
+                    </div>
+                </div>
+                <div class="card-sparkline">
+                    <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <polyline points="0,20 15,25 30,18 50,22 65,12 80,15 100,8" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card-enhanced card-recruiters" id="card-recruiters">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-icon-wrapper icon-recruiters">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Total Recruiters</span>
+                        <span class="card-value count-up" data-target="34">0</span>
+                        <span class="card-trend trend-up">
+                            <i class="fas fa-handshake"></i> Verified Partners
+                        </span>
+                    </div>
+                </div>
+                <div class="card-sparkline">
+                    <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <polyline points="0,22 20,20 40,25 55,15 70,18 85,10 100,8" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card-enhanced card-selected" id="card-selected">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-icon-wrapper icon-selected">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Selected Candidates</span>
+                        <span class="card-value count-up" data-target="89">0</span>
+                        <span class="card-trend trend-up">
+                            <i class="fas fa-trophy"></i> Successfully Hired
+                        </span>
+                    </div>
+                </div>
+                <div class="card-sparkline">
+                    <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <polyline points="0,28 15,22 35,25 50,18 70,12 85,15 100,5" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card-enhanced card-pending" id="card-pending">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-icon-wrapper icon-pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Pending Applications</span>
+                        <span class="card-value count-up" data-target="126">0</span>
+                        <span class="card-trend trend-warning">
+                            <i class="fas fa-hourglass-half"></i> Awaiting Review
+                        </span>
+                    </div>
+                </div>
+                <div class="card-sparkline">
+                    <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <polyline points="0,15 20,20 35,12 50,25 65,18 80,22 100,15" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="charts-row">
+                <div class="chart-card" id="chart-card-pie">
+                    <div class="chart-header">
+                        <div class="chart-title-group">
+                            <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Job Categories Distribution</h3>
+                            <p class="chart-subtitle">Breakdown by employment type</p>
+                        </div>
+                        <div class="chart-badge">
+                            <i class="fas fa-circle" style="color: #6366f1; font-size: 0.5rem;"></i> Live Data
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="jobCategoriesChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card" id="chart-card-bar">
+                    <div class="chart-header">
+                        <div class="chart-title-group">
+                            <h3 class="chart-title"><i class="fas fa-chart-bar"></i> Monthly Applications</h3>
+                            <p class="chart-subtitle">Application volume over months</p>
+                        </div>
+                        <div class="chart-badge">
+                            <i class="fas fa-circle" style="color: #10b981; font-size: 0.5rem;"></i> Updated
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="monthlyApplicationsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-row-full">
+                <div class="chart-card chart-card-wide" id="chart-card-line">
+                    <div class="chart-header">
+                        <div class="chart-title-group">
+                            <h3 class="chart-title"><i class="fas fa-chart-line"></i> Hiring Trends</h3>
+                            <p class="chart-subtitle">Candidates selected over time</p>
+                        </div>
+                        <div class="chart-badge">
+                            <i class="fas fa-circle" style="color: #f59e0b; font-size: 0.5rem;"></i> Trends
+                        </div>
+                    </div>
+                    <div class="chart-body chart-body-wide">
+                        <canvas id="hiringTrendsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Approvals Section -->
+        <div class="approvals-section">
+            <div class="approvals-grid">
+                <div class="table-container-enhanced">
+                    <div class="table-header-enhanced">
+                        <h2><i class="fas fa-bell"></i> Pending Approvals</h2>
+                        <span class="pulse-dot"></span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Pending Count</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="category-cell">
+                                        <i class="fas fa-user-tie" style="color: var(--accent-color);"></i>
+                                        Recruiter Verifications
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-pending">5</span></td>
+                                <td><a href="#" class="btn btn-primary btn-sm">Review</a></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="category-cell">
+                                        <i class="fas fa-briefcase" style="color: var(--warning-color);"></i>
+                                        Job Post Moderation
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-pending">8</span></td>
+                                <td><a href="#" class="btn btn-primary btn-sm">Review</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="quick-actions-card">
+                    <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    <div class="actions-grid">
+                        <a href="#" class="action-btn action-reports">
+                            <i class="fas fa-file-export"></i>
+                            <span>Export Report</span>
+                        </a>
+                        <a href="#" class="action-btn action-settings">
+                            <i class="fas fa-cog"></i>
+                            <span>Site Settings</span>
+                        </a>
+                        <a href="#" class="action-btn action-users">
+                            <i class="fas fa-users"></i>
+                            <span>Manage Users</span>
+                        </a>
+                        <a href="#" class="action-btn action-complaints">
+                            <i class="fas fa-headset"></i>
+                            <span>Complaints</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Date display
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        // Animated count-up
+        function animateCountUp() {
+            document.querySelectorAll('.count-up').forEach(el => {
+                const target = parseInt(el.getAttribute('data-target')) || 0;
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                const updateCount = () => {
+                    current += increment;
+                    if (current < target) {
+                        el.textContent = Math.floor(current).toLocaleString();
+                        requestAnimationFrame(updateCount);
+                    } else {
+                        el.textContent = target.toLocaleString();
+                    }
+                };
+                updateCount();
+            });
+        }
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.stat-card-enhanced, .chart-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(animateCountUp, 300);
+        });
+
+        // Chart.js config
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.font.family = "'Outfit', 'Inter', sans-serif";
+        Chart.defaults.font.weight = '500';
+
+        // PIE CHART
+        const jobCatCtx = document.getElementById('jobCategoriesChart').getContext('2d');
+        new Chart(jobCatCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Full-Time', 'Part-Time', 'Internship', 'Contract', 'Remote'],
+                datasets: [{
+                    data: [18, 10, 12, 4, 3],
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.85)',
+                        'rgba(6, 182, 212, 0.85)',
+                        'rgba(16, 185, 129, 0.85)',
+                        'rgba(245, 158, 11, 0.85)',
+                        'rgba(239, 68, 68, 0.85)'
+                    ],
+                    borderColor: [
+                        'rgba(99, 102, 241, 1)',
+                        'rgba(6, 182, 212, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(239, 68, 68, 1)'
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 15,
+                    spacing: 3,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10, font: { size: 12, weight: '600' } }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleFont: { size: 14, weight: '700' },
+                        bodyFont: { size: 13 },
+                        padding: 14,
+                        borderColor: 'rgba(99, 102, 241, 0.3)',
+                        borderWidth: 1,
+                        cornerRadius: 12,
+                        callbacks: {
+                            label: function(ctx) {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct = ((ctx.raw / total) * 100).toFixed(1);
+                                return ' ' + ctx.label + ': ' + ctx.raw + ' (' + pct + '%)';
+                            }
+                        }
+                    }
+                },
+                animation: { animateRotate: true, animateScale: true, duration: 1500, easing: 'easeOutQuart' }
+            }
+        });
+
+        // BAR CHART
+        const monthlyCtx = document.getElementById('monthlyApplicationsChart').getContext('2d');
+        const barGradient = monthlyCtx.createLinearGradient(0, 0, 0, 300);
+        barGradient.addColorStop(0, 'rgba(99, 102, 241, 0.9)');
+        barGradient.addColorStop(1, 'rgba(6, 182, 212, 0.4)');
+
+        new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Applications',
+                    data: [12, 19, 8, 15, 22, 30, 25, 18, 35, 28, 20, 14],
+                    backgroundColor: barGradient,
+                    borderColor: 'rgba(99, 102, 241, 0.8)',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleFont: { size: 14, weight: '700' },
+                        bodyFont: { size: 13 },
+                        padding: 14,
+                        borderColor: 'rgba(99, 102, 241, 0.3)',
+                        borderWidth: 1,
+                        cornerRadius: 12,
+                        callbacks: { label: function(ctx) { return ' Applications: ' + ctx.raw; } }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } },
+                    y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { font: { size: 11 }, stepSize: 5 }, beginAtZero: true }
+                },
+                animation: { duration: 1800, easing: 'easeOutQuart' }
+            }
+        });
+
+        // LINE CHART
+        const hiringCtx = document.getElementById('hiringTrendsChart').getContext('2d');
+        const hireGradient = hiringCtx.createLinearGradient(0, 0, 0, 250);
+        hireGradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
+        hireGradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+        const appGradient = hiringCtx.createLinearGradient(0, 0, 0, 250);
+        appGradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+        appGradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+        new Chart(hiringCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [
+                    {
+                        label: 'Hired',
+                        data: [3, 5, 4, 8, 6, 12, 9, 7, 14, 11, 8, 10],
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        backgroundColor: hireGradient,
+                        fill: true, tension: 0.4, borderWidth: 3,
+                        pointBackgroundColor: '#10b981', pointBorderColor: '#fff',
+                        pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 8
+                    },
+                    {
+                        label: 'Applied',
+                        data: [12, 19, 8, 15, 22, 30, 25, 18, 35, 28, 20, 14],
+                        borderColor: 'rgba(99, 102, 241, 1)',
+                        backgroundColor: appGradient,
+                        fill: true, tension: 0.4, borderWidth: 3,
+                        pointBackgroundColor: '#6366f1', pointBorderColor: '#fff',
+                        pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: {
+                        position: 'top', align: 'end',
+                        labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10, font: { size: 12, weight: '600' } }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleFont: { size: 14, weight: '700' },
+                        bodyFont: { size: 13 },
+                        padding: 14,
+                        borderColor: 'rgba(99, 102, 241, 0.3)',
+                        borderWidth: 1,
+                        cornerRadius: 12
+                    }
+                },
+                scales: {
+                    x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { font: { size: 11, weight: '600' } } },
+                    y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { font: { size: 11 } }, beginAtZero: true }
+                },
+                animation: { duration: 2000, easing: 'easeOutQuart' }
+            }
+        });
+    </script>
+</body>
+</html>
