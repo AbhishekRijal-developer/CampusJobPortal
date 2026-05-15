@@ -6,8 +6,8 @@
     <title>Job Details - Campus Job Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/navbar.css">
-    <link rel="stylesheet" href="../css/job-detail.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/navbar.css">
+    <link rel="stylesheet" href="/CampusJobPortal/css/job-detail.css">
 </head>
 
 <body>
@@ -172,6 +172,10 @@
                     </div>
 
                     <!-- ACTION BUTTONS -->
+                    <form id="applyForm" method="POST" style="display:none;">
+                        <input type="hidden" name="jobId" id="jobIdInput">
+                        <textarea name="coverNote" id="coverNote" placeholder="Optional: Add a cover note..." style="width: 100%; height: 80px; margin: 10px 0;"></textarea>
+                    </form>
                     <button class="btn-apply" onclick="handleApply()">
                         <i class="fas fa-paper-plane"></i> Apply Now
                     </button>
@@ -202,13 +206,42 @@
             if (!userType) {
                 alert('Please log in to apply for jobs');
                 window.location.href = '/CampusJobPortal/pages/login.jsp';
-            } else if (userType === 'STUDENT') {
-                alert('Application submitted! The recruiter will review your profile and CV.');
-                // Redirect to applications page
-                // window.location.href = 'student-applications.jsp';
-            } else {
-                alert('Only students can apply for jobs');
+                return;
             }
+            
+            if (userType !== 'STUDENT') {
+                alert('Only students can apply for jobs');
+                return;
+            }
+
+            // Get the job ID from the URL
+            const jobId = new URLSearchParams(window.location.search).get('id');
+            if (!jobId) {
+                alert('Invalid job ID');
+                return;
+            }
+
+            // Submit the application
+            fetch('/CampusJobPortal/ApplyJobServlet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'jobId=' + jobId + '&coverNote=' + encodeURIComponent(document.getElementById('coverNote')?.value || '')
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = '/CampusJobPortal/MyApplicationsServlet';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting application');
+            });
         }
 
         function handleBookmark() {

@@ -11,7 +11,7 @@ public class DBConnection {
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "1234"; 
 
-    // Static block to load the driver
+    
     static {
         try {
             Class.forName(DB_DRIVER);
